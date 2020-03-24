@@ -1,18 +1,19 @@
 import sys, getopt
 import surprise
 from surprise import Dataset
-from surprise.model_selection import cross_validate
+from surprise.model_selection import cross_validate,train_test_split
 
 from partnership import BasicPartner, powerlaw
 
 from metrics import main_metric
 
-def mesure_performance(model, data, cat_products, cat_target):
+def mesure_performance(model, data, train_set, test_set, cat_products, cat_target):
     # Il faudra qu'on ait un truc à nous pour mesurer vraiment les performances pour pouvoir changer les arguments
     cross_validate(model, data, measures=["RMSE","MAE"],cv = 5, verbose = True)
     # Pour l'instant on se contente de mesurer nos performances à la fin du script
-    predictions = model.test(data)
+    predictions = model.test(test_set)
     performance = main_metric(predictions, cat_products, cat_target)
+    print(performance)
 
 
 def main(argv):
@@ -55,12 +56,14 @@ def main(argv):
         print("Erreur dans le dataset")
         sys.exit(2)
 
+    train_set, test_set = train_test_split(data, test_size=.25)
+
     # Construction des Groupes de Produits et des Cibles de Produits
     cat_products = BasicPartner(nb_categories)
     cat_target = powerlaw(nb_categories)
 
     # Mesure des performances
-    mesure_performance(model, data, cat_products, cat_target)
+    mesure_performance(model, data, train_set, test_set,cat_products, cat_target)
 
     sys.exit(0)
 
