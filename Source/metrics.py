@@ -40,4 +40,5 @@ def main_metric(predictions,cat_products, cat_target, K = 10, lamb = 1, verbose 
             tot_similarity+=ratings[2]
             # On ajoute aux proportions en fonction de l'appartenance
             proportions[cat_products[ratings[0]]]+=1
-    return similarity + lamb / np.sum((proportions/K/n-cat_target)**2)
+    regularization_term = lamb / np.sum((proportions/K/n-cat_target)**2)
+    return similarity + regularization_term, similarity, regularization_term
