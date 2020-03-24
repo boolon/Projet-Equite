@@ -25,14 +25,15 @@ def main(argv):
                 print("Erreurs dans l'argument de method : {}".format(arg))
                 sys.exit(2)
         elif opt in ("-d", "--dataset"):
-            if arg == "ml-100k":
+            if arg in ("ml-100k", "ml-1m"):
                 dataset = arg
             else:
                 print("Erreurs dans l'argument de dataset: {}".format(arg))
                 sys.exit(2)
 
     # Chargement des jeux de données
-    data = Dataset.load_builtin(dataset, prompt = False)
+    if type(dataset)==str:
+        data = Dataset.load_builtin(dataset, prompt = False)
 
     # Mesure des performances
     mesure_performance(model, data)
