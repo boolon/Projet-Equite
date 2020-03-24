@@ -5,9 +5,14 @@ from surprise.model_selection import cross_validate
 
 from partnership import BasicPartner, powerlaw
 
-def mesure_performance(model, data):
+from metrics import main_metric
+
+def mesure_performance(model, data, cat_products, cat_target):
     # Il faudra qu'on ait un truc à nous pour mesurer vraiment les performances pour pouvoir changer les arguments
     cross_validate(model, data, measures=["RMSE","MAE"],cv = 5, verbose = True)
+    # Pour l'instant on se contente de mesurer nos performances à la fin du script
+    predictions = model.test(data)
+    performance = main_metric(predictions, cat_products, cat_target)
 
 
 def main(argv):
@@ -55,7 +60,7 @@ def main(argv):
     cat_target = powerlaw(nb_categories)
 
     # Mesure des performances
-    mesure_performance(model, data)
+    mesure_performance(model, data, cat_products, cat_target)
 
     sys.exit(0)
 
