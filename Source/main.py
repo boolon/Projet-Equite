@@ -3,18 +3,23 @@ import surprise
 from surprise import Dataset
 from surprise.model_selection import cross_validate
 
+from partnership import BasicPartner, powerlaw
+
 def mesure_performance(model, data):
     # Il faudra qu'on ait un truc à nous pour mesurer vraiment les performances pour pouvoir changer les arguments
     cross_validate(model, data, measures=["RMSE","MAE"],cv = 5, verbose = True)
 
+
 def main(argv):
     # Traitement des arguments
     try:
-        opts, args = getopt.getopt(argv,"ham:d:",["method=","dataset="])
+        opts, args = getopt.getopt(argv,"ham:d:c:",["method=","dataset=","nb-categories="])
     except getopt.GetoptError:
         sys.exit(2)
+
     model = surprise.SVD()
     dataset = "ml-100k"
+    nb_categories = 10
     for opt, arg in opts:
         if opt=="-h":
             # Help pour l'utilisation de la fonction
@@ -31,10 +36,23 @@ def main(argv):
             else:
                 print("Erreurs dans l'argument de dataset: {}".format(arg))
                 sys.exit(2)
+        elif opt in ("-c","nb-categories"):
+            try:
+                nb_categories=int(arg)
+            except:
+                print("Erreur dans l'argument de nb-categories")
+                sys.exit(2)
 
     # Chargement des jeux de données
     if type(dataset)==str:
         data = Dataset.load_builtin(dataset, prompt = False)
+    else:
+        print("Erreur dans le dataset")
+        sys.exit(2)
+
+    # Construction des Groupes de Produits et des Cibles de Produits
+    cat_products = BasicPartner(nb_categories)
+    cat_target = powerlaw(nb_categories)
 
     # Mesure des performances
     mesure_performance(model, data)

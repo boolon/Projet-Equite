@@ -29,7 +29,6 @@ def get_top_K(predictions, K=10):
     return top_K
 
 def main_metric(predictions,cat_products, cat_target, K = 10, lamb = 1, verbose = False):
-    assert len(cat_products) == len(cat_target)
     top_K = get_top_K(predictions, K = 10)
     tot_similarity = 0
     proportions = np.zeros(len(cat_target))
@@ -40,5 +39,5 @@ def main_metric(predictions,cat_products, cat_target, K = 10, lamb = 1, verbose 
             # On gagne en similarité en fonction du rating véritable
             tot_similarity+=ratings[2]
             # On ajoute aux proportions en fonction de l'appartenance
-            proportions[cat_target[ratings[0]]]+=1
+            proportions[cat_products[ratings[0]]]+=1
     return similarity + lamb / np.sum((proportions/K/n-cat_target)**2)
