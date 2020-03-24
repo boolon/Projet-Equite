@@ -32,7 +32,7 @@ def main(argv):
             sys.exit(0)
         elif opt in ("-m","--method"):
             if arg == "SVD":
-                model = surprise.SVD()
+                model = arg
             else:
                 print("Erreurs dans l'argument de method : {}".format(arg))
                 sys.exit(2)
@@ -61,6 +61,13 @@ def main(argv):
     # Construction des Groupes de Produits et des Cibles de Produits
     cat_products = BasicPartner(nb_categories)
     cat_target = powerlaw(nb_categories)
+
+    # Construction du Modèle
+    if model == "SVD":
+        model = surprise.SVD()
+    else:
+        print("Erreur dans le modèle : {}".format(model))
+        sys.exit(2)
 
     # Mesure des performances
     mesure_performance(model, data, train_set, test_set,cat_products, cat_target)
