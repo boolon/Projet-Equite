@@ -32,6 +32,23 @@ class PerUserAlgo(AlgoBase):
 
         return 1
 
+class GlobalProportionAlgo(AlgoBase):
+    def __init__(self):
+        """
+        Cette méthode consiste à recommander peu à peu des objets en prenant à chaque fois l'objet avec la meilleure similarité
+        dans la catégorie des objets qui est le plus loin de sa valeur cible en proportion parmi les résultat déjà obtenus
+        """
+        AlgoBase.__init__(self)
+
+    def fit(self, trainset):
+        AlgoBase.fit(self, trainset)
+
+        return self
+
+    def estimate(self, u, i):
+
+        return 1
+
 class MeanScoreRelaxation(AlgoBase):
     def __init__(self):
         """
