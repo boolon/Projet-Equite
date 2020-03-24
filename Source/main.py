@@ -4,6 +4,7 @@ from surprise import Dataset
 from surprise.model_selection import cross_validate
 
 def mesure_performance(model, data):
+    # Il faudra qu'on ait un truc à nous pour mesurer vraiment les performances pour pouvoir changer les arguments
     cross_validate(model, data, measures=["RMSE","MAE"],cv = 5, verbose = True)
 
 def main(argv):
@@ -25,7 +26,7 @@ def main(argv):
                 print("Erreurs dans l'argument de method : {}".format(arg))
                 sys.exit(2)
         elif opt in ("-d", "--dataset"):
-            if arg in ("ml-100k", "ml-1m"):
+            if arg in ("ml-100k", "ml-1m", "jester"):
                 dataset = arg
             else:
                 print("Erreurs dans l'argument de dataset: {}".format(arg))
