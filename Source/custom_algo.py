@@ -1,4 +1,9 @@
 from surprise import AlgoBase
+from surprise import SVD
+
+class duckSVD(SVD):
+    def preprocess(self, test_set):
+        pass
 
 class NaiveAlgo(AlgoBase):
     def __init__(self):
@@ -11,6 +16,9 @@ class NaiveAlgo(AlgoBase):
         AlgoBase.fit(self, trainset)
 
         return self
+
+    def preprocess(self, test_set):
+        pass
 
     def estimate(self, u, i):
 
@@ -27,6 +35,8 @@ class PerUserAlgo(AlgoBase):
         AlgoBase.fit(self, trainset)
 
         return self
+    def preprocess(self, test_set):
+        pass
 
     def estimate(self, u, i):
 
@@ -44,6 +54,8 @@ class GlobalProportionAlgo(AlgoBase):
         AlgoBase.fit(self, trainset)
 
         return self
+    def preprocess(self, test_set):
+        pass
 
     def estimate(self, u, i):
 
@@ -60,6 +72,8 @@ class MeanScoreRelaxation(AlgoBase):
         AlgoBase.fit(self, trainset)
 
         return self
+    def preprocess(self, test_set):
+        pass
 
     def estimate(self, u, i):
 
