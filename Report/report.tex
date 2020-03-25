@@ -15,4 +15,29 @@
 \begin{document}
 \maketitle
 
+\section{Méthode de Régularisation}
+
+On se donne $C$ catégories de produits partenaires $P_1, ... , P_C$. On cherche à avoir au moins une fréquence cible de $p_k$ pour chacune des catégories de produit. L'objectif est de trouver une suite d'ensemble $S = (S_i)_{1 \leq i \leq n}$ de recommandations parmi les $m$ produits pour les $n$ utilisateurs qui minimise la fonction de coût suivante~:
+$$
+\phi(S, U)  + \lambda \sum_{k=1}^C\min\left(0, p_k - \frac{1}{n}\sum_{i=1}^{n}1_{P_k\cap S_i\neq \emptyset}\right)
+$$
+Où $\phi(S,U)$ est une fonction qui quantifie le coût en pertinence des recommandations et $\lambda$ est un hyper-paramètre qui quantifie l'importance des contraintes des partenaires commerciaux.\\
+\\
+Dans le cas où on décide d'utiliser une factorisation de matrice comme dans \cite{netflixmoney}, on peut utiliser une erreur moyenne carré avec un terme de régularisation. On suppose qu'on dispose d'une matrice $R$ telle que $r_{i,j}$ correspond la préférence de l'utilisateur $i$ pour le produit $j$. L'objectif est de trouver deux matrices $U\in \mathbb{R}^{n\times V}$ et $M\in \mathbb{R}^{m \times l}$ qui correspondent à l'embedding des utilisateurs et des produits. Pour trouver $S$, on utilise un argmax sur les éléments scores donnés pour chacun des $U_iM_j^T$.\\
+On cherche alors à minimiser la chose suivante~:
+$$
+\psi(M, U) = \sum_{i,j} (r_{i,j} - U_iM_j^T)^2 + \mu\left(\sum_i||U_i||^2 + \sum_j||M_j||^2\right)
+$$
+Où $\mu$ est un hyper-paramètre qui quantifie l'importance de la régularisation dans la minimisation. Il existe plusieurs méthodes pour trouver $U$ et $M$, dont une descente de gradient alternée.\\
+On propose de conserver la descente de gradient en utilisant un objectif sur la valeur moyenne des recommendations des produits dans chaque catégorie pondérée par leur nombre. Pour cela, on se donne une matrice $C\in\{0,1\}^{m\times C}$ telle que $c_{j,k}$ est égal à $1$ si et seulement si le produit $j$ est associé au partenaire $k$. Au lieu d'utiliser les $p_k$, on utilise des $t_k$ qu'il faudra paramétrer de sorte à s'approcher des $p_k$ lors des tests. On note $T = ( t_1, ..., t_C)$. Le terme pour la représentation des produits partenaires devient :
+$$
+\min(0\bm{1}_{C}, T - \frac{1}{n}\bm{1}_{n}UM^TC)
+$$
+Où la fonction $\min$ est appliquée composante par composante. Il est probable qu'il soit nécessaire d'ajouter un terme de régularisation pour ajouter une dépendance avec les scores des autres catégories. \\
+\\
+Finalement, l'objectif serait de trouver les $U$ et $M$ de sorte à minimiser :
+$$
+\min_{U,M}\sum_{i,j} (r_{i,j} - U_iM_j^T)^2 + \mu\left(\sum_i||U_i||^2 + \sum_j||M_j||^2\right) + \lambda \min(0\bm{1}_{K}, T - \frac{1}{n}\bm{1}_{n}UM^TC)
+$$
+\nocite{toward}
 \end{document}
