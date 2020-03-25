@@ -14,7 +14,16 @@
 
 \begin{document}
 \maketitle
-
+\section{Métrique}
+\par On mesure la Similarité de notre recommandation de la manière suivante :
+$$
+\phi(S,U) = \sum_i\sum_{j\in S_i}r_{i,j}
+$$
+\par On mesure le respect de l'équité de la manière suivante :
+$$
+\frac{1}{\sum_{c=1}^C\left(\frac{1}{nK}\sum_i\sum_{j\in S_i}\left[\bm{1}_{j\in P_c}\right] - p_c\right)^2}
+$$
+\par On somme ensuite les deux avec un hyperparamètre pour l'échelle $\lambda$.
 \section{Méthode de Régularisation}
 
 On se donne $C$ catégories de produits partenaires $P_1, ... , P_C$. On cherche à avoir au moins une fréquence cible de $p_k$ pour chacune des catégories de produit. L'objectif est de trouver une suite d'ensemble $S = (S_i)_{1 \leq i \leq n}$ de recommandations parmi les $m$ produits pour les $n$ utilisateurs qui minimise la fonction de coût suivante~:
