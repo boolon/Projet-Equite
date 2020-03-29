@@ -9,6 +9,7 @@ class NaiveAlgo(AlgoBase):
     def __init__(self):
         """
         Cette méthode combinatoire cherche la meilleure solution et n'est absolument pas applicable sur des trucs trop grands
+        Dans le cas d'un top 1, c'est un blossom algorithm
         """
         AlgoBase.__init__(self)
 
