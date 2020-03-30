@@ -1,5 +1,7 @@
 from surprise import AlgoBase
 from surprise import SVD
+from collections import defaultdict
+import numpy as np
 
 class duckSVD(SVD):
     def preprocess(self, test_set):
@@ -26,22 +28,51 @@ class NaiveAlgo(AlgoBase):
         return 1
 
 class PerUserAlgo(AlgoBase):
-    def __init__(self):
+    def __init__(self, cat_products, cat_target):
         """
-        Cette méthode applique les proportions pour chaque utilisateur
+        Cette fonction décide de manière random pour chaque utilisateur dans quelle catégorie tirer les résultats.
         """
         AlgoBase.__init__(self)
 
+        # Le modèle qui nous donne les \hat{r}_ij.
+        self.SVD = SVD()
+
+        # Les informations pour la partnership
+        self.cat_products = cat_products
+        self.cat_target = cat_target
+
     def fit(self, trainset):
         AlgoBase.fit(self, trainset)
-
+        self.SVD.fit(trainset)
         return self
+
     def preprocess(self, test_set):
-        pass
+        self.predicted = dict()
+        possible_prediction = defaultdict(list)
+        for u, i, _ in test_set:
+            possible_prediction[u].append((i, self.SVD.estimate(u,i),self.cat_products[i]))
+
+        for u in possible_prediction:
+            while 1:
+                selected_category = np.random.choice(np.arange(0, len(self.cat_target)), p=self.cat_target)
+                selected_possible = [el for el in possible_prediction[u] if el[2]==selected_category]
+                if selected_possible !=[]:
+                    break
+            max_sim = -1
+
+            for el in selected_possible:
+                if el[1]>max_sim:
+                    max_sim = el[1]
+                    self.predicted[int(u)] = int(el[0])
+        print([len([1 for el in self.predicted if self.predicted[el]%10==i]) for i in range(10)])
+
 
     def estimate(self, u, i):
+        if u in self.predicted:
+            return int(self.predicted[u]==i)
+        else:
+            return -1
 
-        return 1
 
 class GlobalProportionAlgo(AlgoBase):
     def __init__(self):
@@ -57,6 +88,7 @@ class GlobalProportionAlgo(AlgoBase):
         return self
     def preprocess(self, test_set):
         pass
+
 
     def estimate(self, u, i):
 

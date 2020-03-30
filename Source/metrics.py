@@ -26,10 +26,11 @@ def get_top_K(predictions, K=10):
     for uid, user_ratings in top_K.items():
         user_ratings.sort(key=lambda x: x[1], reverse=True)
         top_K[uid] = user_ratings[:K]
+        print(user_ratings[:K])
     return top_K
 
 def main_metric(predictions,cat_products, cat_target, K = 10, lamb = 1, verbose = False):
-    top_K = get_top_K(predictions, K = 10)
+    top_K = get_top_K(predictions, K = K)
     tot_similarity = 0
     proportions = np.zeros(len(cat_target))
     n = 0
@@ -40,5 +41,7 @@ def main_metric(predictions,cat_products, cat_target, K = 10, lamb = 1, verbose 
             tot_similarity+=rating[2]
             # On ajoute aux proportions en fonction de l'appartenance
             proportions[cat_products[rating[0]]]+=1
+    print(proportions)
+    print(cat_target)
     regularization_term = lamb / (1+np.sum((proportions/K/n-cat_target)**2))
     return tot_similarity + regularization_term, tot_similarity, regularization_term

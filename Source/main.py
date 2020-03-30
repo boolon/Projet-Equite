@@ -9,14 +9,16 @@ from metrics import main_metric
 
 from custom_algo import *
 
-def mesure_performance(model, data, train_set, test_set, cat_products, cat_target):
+def mesure_performance(model, data, train_set, test_set, cat_products, cat_target, K = 10):
     # Il faudra qu'on ait un truc à nous pour mesurer vraiment les performances pour pouvoir changer les arguments
     # cross_validate(model, data, measures=["RMSE","MAE"],cv = 5, verbose = True)
     # Pour l'instant on se contente de mesurer nos performances à la fin du script
     model.fit(train_set)
     model.preprocess(test_set)
     predictions = model.test(test_set)
-    performance = main_metric(predictions, cat_products, cat_target)
+    print(len(predictions))
+    print(len(test_set))
+    performance = main_metric(predictions, cat_products, cat_target, K = K)
     print(performance)
 
 
@@ -28,6 +30,7 @@ def main(argv):
         sys.exit(2)
 
     model = "SVD"
+    K = 10
     dataset = "ml-100k"
     nb_categories = 10
     for opt, arg in opts:
@@ -35,7 +38,7 @@ def main(argv):
             # Help pour l'utilisation de la fonction
             sys.exit(0)
         elif opt in ("-m","--method"):
-            if arg == "SVD":
+            if arg in ("SVD", "perUser"):
                 model = arg
             else:
                 print("Erreurs dans l'argument de method : {}".format(arg))
@@ -69,12 +72,15 @@ def main(argv):
     # Construction du Modèle
     if model == "SVD":
         model = duckSVD()
+    elif model == "perUser":
+        model = PerUserAlgo(cat_products,cat_target)
+        K = 1
     else:
         print("Erreur dans le modèle : {}".format(model))
         sys.exit(2)
 
     # Mesure des performances
-    mesure_performance(model, data, train_set, test_set,cat_products, cat_target)
+    mesure_performance(model, data, train_set, test_set,cat_products, cat_target, K = K)
 
     sys.exit(0)
 
