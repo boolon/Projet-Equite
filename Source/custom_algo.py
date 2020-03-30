@@ -3,9 +3,40 @@ from surprise import SVD
 from collections import defaultdict
 import numpy as np
 
-class duckSVD(SVD):
+class duckSVD(AlgoBase):
+    def __init__(self):
+        """
+        Le SVD avec un top1 à la fin
+        """
+        AlgoBase.__init__(self)
+        self.SVD = SVD()
+
+    def fit(self, trainset):
+        AlgoBase.fit(self, trainset)
+        self.SVD.fit(trainset)
+        return self
+
     def preprocess(self, test_set):
-        pass
+
+        self.predicted = dict()
+        possible_prediction = defaultdict(list)
+        for u, i, _ in test_set:
+            possible_prediction[u].append((i, self.SVD.estimate(u,i)))
+        for u in possible_prediction:
+            max_sim = -1
+            for el in possible_prediction[u]:
+                if float(el[1])>max_sim:
+                    max_sim = el[1]
+                    self.predicted[int(u)]=int(el[0])
+        
+
+    def estimate(self, u, i):
+        if type(i)==str and i.startswith("UKN"):
+            return -1
+        if int(u) in self.predicted:
+            return int(self.predicted[int(u)]==int(i))
+        else:
+            return -1
 
 class NaiveAlgo(AlgoBase):
     def __init__(self):
