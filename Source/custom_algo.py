@@ -28,7 +28,7 @@ class duckSVD(AlgoBase):
                 if float(el[1])>max_sim:
                     max_sim = el[1]
                     self.predicted[int(u)]=int(el[0])
-        
+
 
     def estimate(self, u, i):
         if type(i)==str and i.startswith("UKN"):
@@ -125,7 +125,6 @@ class GlobalProportionAlgo(AlgoBase):
 
 
     def estimate(self, u, i):
-
         return 1
 
 class MeanScoreRelaxation(AlgoBase):
