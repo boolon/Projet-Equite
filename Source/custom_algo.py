@@ -53,6 +53,7 @@ class PerUserAlgo(AlgoBase):
             possible_prediction[u].append((i, self.SVD.estimate(u,i),self.cat_products[i]))
 
         for u in possible_prediction:
+            # print([[el for el in possible_prediction[u] if el[2]==selected_category]!=[] for selected_category in range(10)])
             while 1:
                 selected_category = np.random.choice(np.arange(0, len(self.cat_target)), p=self.cat_target)
                 selected_possible = [el for el in possible_prediction[u] if el[2]==selected_category]
@@ -64,12 +65,14 @@ class PerUserAlgo(AlgoBase):
                 if el[1]>max_sim:
                     max_sim = el[1]
                     self.predicted[int(u)] = int(el[0])
-        print([len([1 for el in self.predicted if self.predicted[el]%10==i]) for i in range(10)])
+        # print([len([1 for el in self.predicted if self.predicted[el]%10==i]) for i in range(10)])
 
 
     def estimate(self, u, i):
-        if u in self.predicted:
-            return int(self.predicted[u]==i)
+        if type(i)==str and i.startswith("UKN"):
+            return -1
+        if int(u) in self.predicted:
+            return int(self.predicted[int(u)]==int(i))
         else:
             return -1
 

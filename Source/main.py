@@ -16,9 +16,7 @@ def mesure_performance(model, data, train_set, test_set, cat_products, cat_targe
     model.fit(train_set)
     model.preprocess(test_set)
     predictions = model.test(test_set)
-    print(len(predictions))
-    print(len(test_set))
-    performance = main_metric(predictions, cat_products, cat_target, K = K)
+    performance = main_metric(predictions, cat_products, cat_target, K = K, model = model)
     print(performance)
 
 
