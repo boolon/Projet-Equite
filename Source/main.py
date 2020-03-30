@@ -3,7 +3,7 @@ import surprise
 from surprise import Dataset
 from surprise.model_selection import cross_validate,train_test_split
 
-from partnership import BasicPartner, powerlaw
+from partnership import BasicPartner, powerlaw,geolaw
 
 from metrics import main_metric
 
@@ -30,7 +30,7 @@ def main(argv):
     model = "SVD"
     K = 10
     dataset = "ml-100k"
-    nb_categories = 10
+    nb_categories = 5
     for opt, arg in opts:
         if opt=="-h":
             # Help pour l'utilisation de la fonction
@@ -65,7 +65,7 @@ def main(argv):
 
     # Construction des Groupes de Produits et des Cibles de Produits
     cat_products = BasicPartner(nb_categories)
-    cat_target = powerlaw(nb_categories)
+    cat_target = geolaw(nb_categories)
 
     # Construction du Modèle
     if model == "SVD":
