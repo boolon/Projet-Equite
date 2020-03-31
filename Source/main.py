@@ -65,7 +65,7 @@ def main(argv):
 
 
     my_seed = 1995
-    random.seed(my_seed)
+    np.random.seed(my_seed)
     np.random.seed(my_seed)
 
     # Chargement des jeux de données
