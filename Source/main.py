@@ -13,11 +13,20 @@ def mesure_performance(model, data, train_set, test_set, cat_products, cat_targe
     # Il faudra qu'on ait un truc à nous pour mesurer vraiment les performances pour pouvoir changer les arguments
     # cross_validate(model, data, measures=["RMSE","MAE"],cv = 5, verbose = True)
     # Pour l'instant on se contente de mesurer nos performances à la fin du script
+    print("Training...")
+    print("")
     model.fit(train_set)
+    print("Preprocessing...")
+    print("")
     model.preprocess(test_set)
+    print("")
+    print("Predicting...")
+    print()
     predictions = model.test(test_set)
-    performance = main_metric(predictions, cat_products, cat_target, K = K, model = model)
-    print(performance)
+    print("Computing performance...")
+    print("")
+    performance = main_metric(predictions, cat_products, cat_target, K = K)
+    print("Performance : "+str(performance))
 
 
 def main(argv):

@@ -4,12 +4,12 @@ from collections import defaultdict
 def get_top_K(predictions, K=10):
     '''
     From surprise documentation
-    Return the top-N recommendation for each user from a set of predictions.
+    Return the top-K recommendation for each user from a set of predictions.
 
     Args:
         predictions(list of Prediction objects): The list of predictions, as
             returned by the test method of an algorithm.
-        n(int): The number of recommendation to output for each user. Default
+        K(int): The number of recommendation to output for each user. Default
             is 10.
 
     Returns:
@@ -28,14 +28,8 @@ def get_top_K(predictions, K=10):
         top_K[uid] = user_ratings[:K]
     return top_K
 
-def main_metric(predictions,cat_products, cat_target, K = 10, lamb = 1, verbose = False, model = None):
-    if model!= None:
-        top_K = defaultdict(list)
-        for uid in model.predicted:
-            top_K[uid].append((model.predicted[uid],None,[el[2] for el in predictions if int(el[0])==uid and int(el[1])==int(model.predicted[uid])][0]))
-    else:
-        top_K =get_top_K(predictions, K = K)
-
+def main_metric(predictions,cat_products, cat_target, K = 10, lamb = 1, verbose = False):
+    top_K = get_top_K(predictions, K = 10)
     tot_similarity = 0
     proportions = np.zeros(len(cat_target))
     n = 0
