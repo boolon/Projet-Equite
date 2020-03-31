@@ -45,13 +45,13 @@ def main(argv):
             # Help pour l'utilisation de la fonction
             sys.exit(0)
         elif opt in ("-m","--method"):
-            if arg in ("SVD", "perUser"):
+            if arg in ("SVD", "perUser","naiveAlgo"):
                 model = arg
             else:
                 print("Erreurs dans l'argument de method : {}".format(arg))
                 sys.exit(2)
         elif opt in ("-d", "--dataset"):
-            if arg in ("ml-100k", "ml-1m", "jester"):
+            if arg in ("ml-100k", "ml-1m", "jester","simonml"):
                 dataset = arg
             else:
                 print("Erreurs dans l'argument de dataset: {}".format(arg))
@@ -64,13 +64,17 @@ def main(argv):
                 sys.exit(2)
 
     # Chargement des jeux de données
-    if type(dataset)==str:
+    if dataset in ("ml-100k", "ml-1m", "jester",):
         data = Dataset.load_builtin(dataset, prompt = False)
+        train_set, test_set = train_test_split(data, test_size=.25)
+    elif dataset == "simonml":
+        data = Dataset.load_builtin("ml-100k", prompt = False)
+        train_set, test_set = train_test_split(data, test_size=.25)
+        test_set = [x for x in test_set if x[0] in ['1', '2', '3', '4', '5', '6']]
     else:
         print("Erreur dans le dataset")
         sys.exit(2)
 
-    train_set, test_set = train_test_split(data, test_size=.25)
 
     # Construction des Groupes de Produits et des Cibles de Produits
     cat_products = BasicPartner(nb_categories)
@@ -82,6 +86,10 @@ def main(argv):
     elif model == "perUser":
         model = PerUserAlgo(cat_products,cat_target)
         K = 1
+    elif model == "naiveAlgo":
+        model = NaiveAlgo(cat_products, cat_target)
+        if dataset!="simonml":
+            print("Warning : Computation has only few chances (none, tbh) to end if the dataset is to big")
     else:
         print("Erreur dans le modèle : {}".format(model))
         sys.exit(2)
