@@ -27,6 +27,7 @@ print("Catégories : "+str(total_cat))
 print("")
 
 #Je construis le modèle
+
 model = NaiveAlgo(cat_products,cat_target)
 
 #Je lance le test

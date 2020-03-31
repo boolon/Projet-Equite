@@ -51,7 +51,7 @@ class duckSVD(AlgoBase):
 
 class NaiveAlgo(AlgoBase):
 
-    def __init__(self, cat_products, cat_target,A = 2):
+    def __init__(self, cat_products, cat_target,A = 1000):
         """
         Cette méthode combinatoire cherche la meilleure solution et n'est absolument pas applicable sur des trucs trop grands
         Dans le cas d'un top 1, c'est un blossom algorithm
