@@ -18,6 +18,8 @@ def powerlaw(n, power = 2):
         result[i]  = power ** i
     return result/np.sum(result)
 
+
+
 def geolaw(n, fact = 2):
     result = np.zeros(n)
     for i in range(n):
