@@ -25,7 +25,7 @@ def mesure_performance(model, data, train_set, test_set, cat_products, cat_targe
     predictions = model.test(test_set)
     print("Computing performance...")
     print("")
-    performance = main_metric(predictions, cat_products, cat_target, K = K)
+    performance = main_metric(predictions, cat_products, cat_target, K = K, model = model)
     print("Performance : "+str(performance))
 
 
@@ -37,7 +37,7 @@ def main(argv):
         sys.exit(2)
 
     model = "SVD"
-    K = 10
+    K = 1
     dataset = "ml-100k"
     nb_categories = 5
     for opt, arg in opts:
@@ -90,7 +90,6 @@ def main(argv):
         model = duckSVD()
     elif model == "perUser":
         model = PerUserAlgo(cat_products,cat_target)
-        K = 1
     elif model == "naiveAlgo":
         model = NaiveAlgo(cat_products, cat_target)
         if dataset!="simonml":

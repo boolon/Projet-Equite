@@ -1,5 +1,6 @@
 import numpy as np
 from collections import defaultdict
+from custom_algo import NaiveAlgo
 
 def get_top_K(predictions, K=10):
     '''
@@ -28,8 +29,14 @@ def get_top_K(predictions, K=10):
         top_K[uid] = user_ratings[:K]
     return top_K
 
-def main_metric(predictions,cat_products, cat_target, K = 10, lamb = 1, verbose = False):
-    top_K = get_top_K(predictions, K = 10)
+def main_metric(predictions,cat_products, cat_target, K = 10, lamb = 1, verbose = False, model = None):
+    if model!= None and not isinstance(model, NaiveAlgo):
+        top_K = defaultdict(list)
+        for uid in model.predicted:
+            top_K[uid].append((model.predicted[uid],None,[el[2] for el in predictions if int(el[0])==uid and int(el[1])==int(model.predicted[uid])][0]))
+    else:
+        top_K =get_top_K(predictions, K = K)
+
     tot_similarity = 0
     proportions = np.zeros(len(cat_target))
     n = 0
