@@ -63,6 +63,11 @@ def main(argv):
                 print("Erreur dans l'argument de nb-categories")
                 sys.exit(2)
 
+
+    my_seed = 1995
+    random.seed(my_seed)
+    np.random.seed(my_seed)
+
     # Chargement des jeux de données
     if dataset in ("ml-100k", "ml-1m", "jester",):
         data = Dataset.load_builtin(dataset, prompt = False)
