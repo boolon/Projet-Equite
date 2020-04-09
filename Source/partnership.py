@@ -11,17 +11,15 @@ class BasicPartner:
 
 def powerlaw(n, power = 2):
     """
-    Cette fonction veut renvoyer une répartition en puissance de somme nulle et de taille n
+    Cette fonction veut renvoyer une répartition en puissance normalisée de taille n
     """
     result = np.zeros(n)
     for i in range(n):
         result[i]  = power ** i
     return result/np.sum(result)
 
-
-
 def geolaw(n, fact = 2):
     result = np.zeros(n)
     for i in range(n):
-        result[i]  = fact * i
+        result[i]  = fact * (i+1)
     return result/np.sum(result)

@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass{beamer}
 
 \usepackage[francais]{babel}
 \usepackage[utf8]{inputenc}
@@ -6,47 +6,132 @@
 \usepackage{amssymb}
 \usepackage[T1]{fontenc}
 \usepackage{bm}
+\usepackage[french]{algorithm2e}
+\usepackage{graphicx}
+\usepackage{natbib}
+\setbeamertemplate{footline}[frame number]
+\beamertemplatenavigationsymbolsempty
 
 
-\title{Équité dans les Systèmes de Recommandations}
-\author{Simon Rosenberg \& Hector Dang-Nhu}
+
+\title{Équité dans le Filtrage Collaboratif}
+\author{Hector Dang-Nhu \& Cyrine Hlioui \& Romain Warlop}
 \renewcommand{\phi}[0]{\varphi}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 
 \begin{document}
-\maketitle
-\section{Métrique}
-\par On mesure la Similarité de notre recommandation de la manière suivante :
-$$
-\phi(S,U) = \sum_i\sum_{j\in S_i}r_{i,j}
-$$
-\par On mesure le respect de l'équité de la manière suivante :
-$$
-\frac{1}{\sum_{c=1}^C\left(\frac{1}{nK}\sum_i\sum_{j\in S_i}\left[\bm{1}_{j\in P_c}\right] - p_c\right)^2}
-$$
-\par On somme ensuite les deux avec un hyperparamètre pour l'échelle $\lambda$.
-\section{Méthode de Régularisation}
+\begin{frame}
+  \maketitle
+\end{frame}
+\section{Introduction}
+\begin{frame}{Introduction}
+  \begin{itemize}
+    \item Système de Recommandation : estimer la manièr dont un utilisateur $i$ peut réagir à un produit $j$
+    \item Filtrage Collaboratif : utiliser les réactions des utilisateurs pour faire des recommandations
+  \end{itemize}
+\end{frame}
+\begin{frame}{Factorisation de Matrice}
+  $$\min_{U,M}\sum_{i,j} (r_{i,j} - U_iM_j^T)^2 + \mu\left(\sum_i||U_i||^2+ \sum_j||M_j||^2\right)$$
+  $U$ la matrice des utilisateurs, $M$ la matrice des produits
+\end{frame}
 
-On se donne $C$ catégories de produits partenaires $P_1, ... , P_C$. On cherche à avoir au moins une fréquence cible de $p_k$ pour chacune des catégories de produit. L'objectif est de trouver une suite d'ensemble $S = (S_i)_{1 \leq i \leq n}$ de recommandations parmi les $m$ produits pour les $n$ utilisateurs qui minimise la fonction de coût suivante~:
-$$
-\phi(S, U)  + \lambda \sum_{k=1}^C\min\left(0, p_k - \frac{1}{n}\sum_{i=1}^{n}1_{P_k\cap S_i\neq \emptyset}\right)
-$$
-Où $\phi(S,U)$ est une fonction qui quantifie le coût en pertinence des recommandations et $\lambda$ est un hyper-paramètre qui quantifie l'importance des contraintes des partenaires commerciaux.\\
-\\
-Dans le cas où on décide d'utiliser une factorisation de matrice comme dans \cite{netflixmoney}, on peut utiliser une erreur moyenne carré avec un terme de régularisation. On suppose qu'on dispose d'une matrice $R$ telle que $r_{i,j}$ correspond la préférence de l'utilisateur $i$ pour le produit $j$. L'objectif est de trouver deux matrices $U\in \mathbb{R}^{n\times V}$ et $M\in \mathbb{R}^{m \times l}$ qui correspondent à l'embedding des utilisateurs et des produits. Pour trouver $S$, on utilise un argmax sur les éléments scores donnés pour chacun des $U_iM_j^T$.\\
-On cherche alors à minimiser la chose suivante~:
-$$
-\psi(M, U) = \sum_{i,j} (r_{i,j} - U_iM_j^T)^2 + \mu\left(\sum_i||U_i||^2 + \sum_j||M_j||^2\right)
-$$
-Où $\mu$ est un hyper-paramètre qui quantifie l'importance de la régularisation dans la minimisation. Il existe plusieurs méthodes pour trouver $U$ et $M$, dont une descente de gradient alternée.\\
-On propose de conserver la descente de gradient en utilisant un objectif sur la valeur moyenne des recommendations des produits dans chaque catégorie pondérée par leur nombre. Pour cela, on se donne une matrice $C\in\{0,1\}^{m\times C}$ telle que $c_{j,k}$ est égal à $1$ si et seulement si le produit $j$ est associé au partenaire $k$. Au lieu d'utiliser les $p_k$, on utilise des $t_k$ qu'il faudra paramétrer de sorte à s'approcher des $p_k$ lors des tests. On note $T = ( t_1, ..., t_C)$. Le terme pour la représentation des produits partenaires devient :
-$$
-\min(0\bm{1}_{C}, T - \frac{1}{n}\bm{1}_{n}UM^TC)
-$$
-Où la fonction $\min$ est appliquée composante par composante. Il est probable qu'il soit nécessaire d'ajouter un terme de régularisation pour ajouter une dépendance avec les scores des autres catégories. \\
-\\
-Finalement, l'objectif serait de trouver les $U$ et $M$ de sorte à minimiser :
-$$
-\min_{U,M}\sum_{i,j} (r_{i,j} - U_iM_j^T)^2 + \mu\left(\sum_i||U_i||^2 + \sum_j||M_j||^2\right) + \lambda \min(0\bm{1}_{K}, T - \frac{1}{n}\bm{1}_{n}UM^TC)
-$$
-\nocite{toward}
+\begin{frame}{Mesures d'équités}
+  Parité démographique, avec $A$ l'attribut protégé et $\hat Y$ la décision binaire :
+  $$P(\hat Y = 1 | A = 0) = P(\hat Y = 1 | A = 1) $$
+  Opportunités égales avec $A$ l'attribut protégé, $\hat Y$ la décision binaire et $Y$ l'étiquette réelle :
+  $$\forall y, P(\hat Y = 1 | A = 0, Y = y) = P(\hat Y = 1 | A = 1, Y = y) $$
+  Importance pour des questions de lutte anti-discrimination, entre autres.
+\end{frame}
+\begin{frame}{Mesures d'équités côté fournisseur de contenu}
+  Problème : équité pour les artistes ou les produits
+\end{frame}
+
+\section{Définition du problème}
+\begin{frame}{Métriques en Top-K}
+$$\phi(S) = \sum_i\sum_{j\in S_i}r_{i,j}$$
+$$\mathcal{E}(S) = \sum_{c=1}^C\left(\frac{1}{nK}\sum_i\sum_{j\in S_i}\left[\bm{1}_{j\in P_c}\right] - p_c\right)^2$$
+$r_{i,j}$ le score donné par l'utilisateur $i$ au produit $j$\\
+$P_c$ l'ensemble des produits de la catégorie $c$\\
+$p_c$ la proportion cible pour cette catégorie\\
+$S_i$ est l'ensemble de taille $K$ de recommandations pour l'utilisateur $i$
+\end{frame}
+\begin{frame}{Métriques en Top-1}
+$$\phi(S) = \sum_ir_{i,S(i)}$$
+  $$\mathcal{E}(S) = \sum_{c=1}^C\left(\frac{1}{n}\sum_i\left[\bm{1}_{S(i)\in P_c}\right] - p_c\right)^2$$
+  $S$ est désormais une fonction qui à un utilisateur $i$ sa recommandation $S(i)$.
+\end{frame}
+\section{Algorithmes proposés}
+\begin{frame}{Recommandation probabiliste pour chaque utilisateur}
+  $$\Pr(S(i) \in P_c)\propto \begin{cases} p_c & \text{ s'il peut y avoir une recommandation dans }P_c  \\ 0 & \text{autrement.} \end{cases}$$
+  Pour chaque $i$, on prend la meilleure estimation de $P_c$\\
+  ~\\
+  En $O(nm)$ mais peut être ramené à un pré-calcul en $O(nm\log(nm))$ et une exécution en $O(n\log(m))$.
+\end{frame}
+\begin{frame}{Recommandation par proportions globales}
+\begin{algorithm}[H]
+   \While{ il y a des recommandations à faire}
+   {
+    On prend la catégorie avec la plus grande différence en défaut d'éléments dans les recommandations actuelles\;
+    On prend la paire $(i,j)$ de la catégorie avec le plus grand $\hat r$\;
+    La paire $(i,j)$ devient la recommandation\;
+   }
+  \end{algorithm}
+  ~\\
+  En $O(nm\log(nm))$ avec des tas
+\end{frame}
+\begin{frame}{Optimisation par pénalisation par l'équité}
+\begin{align*}
+  \min_{U,M}\sum_{i,j} (r_{i,j} - U_iM_j^T)^2 & + \mu\left(\sum_i||U_i||^2+ \sum_j||M_j||^2\right)\\
+  & + \lambda \norm{ T - \frac{1}{n}\bm{1}_{n}UM^TC}^2
+\end{align*}
+$U$ la matrice des utilisateurs, $M$ la matrice des produits\\
+$T$ le vecteur des proportions cible des produits\\
+$C$ la matrice telle que $C_{j,c}=\bm 1_{j\in P_c}$\\
+$\lambda$ et $\mu$ deux hyper paramètres\\
+\end{frame}
+\section{Résultats}
+\subsection{Remarques sur l'implémentation}
+\begin{frame}{Implémentation}
+  \begin{itemize}
+    \item On utilise le package \verb?surprise? pour les systèmes de recommandations
+    \item On utilise le modulo de l'id des produits pour savoir leur catégorie
+    \item $p_c\propto 2(c+1)$
+    \item On utilise SVD pour estimer les $r_{ij}$
+  \end{itemize}
+\end{frame}
+\subsection{Similarité}
+\begin{frame}{Similarité Totale}
+  \includegraphics[width = 10cm]{sim1}
+
+\end{frame}
+\subsection{Équité}
+\begin{frame}{Terme d'Équité}
+  \includegraphics[width = 5cm]{eq2}
+  \includegraphics[width = 5cm]{eq3}
+\end{frame}
+\subsection{Temps d'exécution}
+\begin{frame}{Temps d'exécution}
+  \includegraphics[width = 5cm]{t1}
+  \includegraphics[width = 5cm]{t2}
+\end{frame}
+\section{Pistes d'amélioration}
+\begin{frame}{Pistes d'amélioration}
+  \begin{itemize}
+    \item Pondération des probabilités par la similarité pour la recommandation par utilisateur
+    \item Amélioration de la descente de gradient et utilisation de softmax ou de normalisation dans le terme de la perte d'équité
+    \item Relaxation convexe
+    \item Heuristiques pour un algo qui optimise brutalement avec une contrainte d'équité
+    \item Top-K
+  \end{itemize}
+\end{frame}
+\nocite{toward,netflixmoney,yao2017parity,pleiss2017fairness}
+\begin{frame}{Bibliographie}
+  \bibliographystyle{plain}
+  \bibliography{projet}
+  %\url{https://github.com/boolon/Projet-Equite}
+\end{frame}
+\begin{frame}
+  Merci de votre attention
+\end{frame}
+
 \end{document}
